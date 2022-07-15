@@ -90,15 +90,23 @@ import User from "../components/User";
 import MessageForm from "../components/MessageForm";
 import Message from "../components/Message";
 import Img from "../photo.svg";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import VideoCall from "../components/svg/VideoCall";
+import LinkTo from "../components/svg/LinkTo";
 
 const Home = () => {
   const [users, setUsers] = useState([]);
   const [chat, setChat] = useState("");
   const [text, setText] = useState("");
   const [img, setImg] = useState("");
+  const [incoming, setIncoming] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [listen, setListen] = useState("");
   const [msgs, setMsgs] = useState([]);
-  const [searchTerm,setSearchTerm] = useState("");
+  const [isWebCam, setIsWebCam] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [user1detail, setUser1detail] = useState("");
+  const [user2detail, setUser2detail] = useState("");
   const navigate = useNavigate();
   const user1 = auth.currentUser ? auth.currentUser.uid : null;
 
@@ -108,6 +116,12 @@ const Home = () => {
     }
     const usersRef = collection(db, "users");
     // create query object
+    getDoc(doc(db, "users", auth.currentUser.uid)).then((docSnap) => {
+      if (docSnap.exists) {
+        setUser1detail(docSnap.data());
+      }
+    });
+
     const q = query(usersRef, where("uid", "not-in", [user1]));
     // execute query
     const unsub = onSnapshot(q, (querySnapshot) => {
@@ -119,10 +133,13 @@ const Home = () => {
     });
     return () => unsub();
   }, []);
-
+  if (user1detail.incoming) {
+    if (window.confirm("Incoming call")) {
+      navigate("/call/incoming");
+    }
+  }
   const selectUser = async (user) => {
     setChat(user);
-
     const user2 = user.uid;
     const id = user1 > user2 ? `${user1 + user2}` : `${user2 + user1}`;
 
@@ -134,7 +151,8 @@ const Home = () => {
     onSnapshot(q, (querySnapshot) => {
       let msgs = [];
       querySnapshot.forEach((doc) => {
-        msgs.push(doc.data());
+        msgs.push([doc.data(), doc.id]);
+        console.log(doc.data(), doc.id);
       });
       setMsgs(msgs);
     });
@@ -150,13 +168,17 @@ const Home = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
+    if (img === "" && text === "" && listen === "") {
+      setLoading(false);
+      return;
+    }
     const user2 = chat.uid;
 
     const id = user1 > user2 ? `${user1 + user2}` : `${user2 + user1}`;
 
-    let url;
-    if (img) {
+    let url = img;
+    if (img && !isWebCam) {
       const imgRef = ref(
         storage,
         `images/${new Date().getTime()} - ${img.name}`
@@ -172,6 +194,7 @@ const Home = () => {
       to: user2,
       createdAt: Timestamp.fromDate(new Date()),
       media: url || "",
+      listen,
     });
 
     await setDoc(doc(db, "lastMsg", id), {
@@ -185,6 +208,12 @@ const Home = () => {
     console.log(user2.name);
     setText("");
     setImg("");
+    setListen("");
+    setLoading(false);
+    setIsWebCam(false);
+  };
+  const handleVideoCall = () => {
+    navigate("/call/" + chat.uid);
   };
   console.log(chat);
   return (
@@ -195,26 +224,31 @@ const Home = () => {
             type="text"
             name="search"
             placeholder="Search or start new chat"
-            onChange={(e)=>{setSearchTerm(e.target.value)}}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
           />
         </div>
-        <div className='underLine'></div>
-        {users.filter((val)=>{
-          if(searchTerm==""){
-            return val;
-          }else if(val.name.toLowerCase().includes(searchTerm.toLowerCase())){
-            return val;
-          }
-
-        }).map((user) => (
-          <User
-            key={user.uid}
-            user={user}
-            selectUser={selectUser}
-            user1={user1}
-            chat={chat}
-          />
-        ))}
+        <div className="underLine"></div>
+        {users
+          .filter((val) => {
+            if (searchTerm === "") {
+              return val;
+            } else if (
+              val.name.toLowerCase().includes(searchTerm.toLowerCase())
+            ) {
+              return val;
+            }
+          })
+          .map((user) => (
+            <User
+              key={user.uid}
+              user={user}
+              selectUser={selectUser}
+              user1={user1}
+              chat={chat}
+            />
+          ))}
       </div>
       <div className="messages_container">
         {chat ? (
@@ -223,18 +257,26 @@ const Home = () => {
               className="messages_user"
               style={{ backgroundColor: "#dfc9d0", color: "black" }}
             >
-              {/* <img src={chat.avatar}/>
-              <h3>{chat.name}</h3> */}
               <div className="user_detail">
                 <img src={chat.avatar || Img} alt="avatar" className="avatar" />
                 <h4>{chat.name}</h4>
+              </div>
+              <div className="video-call" onClick={handleVideoCall}>
+                <VideoCall />
               </div>
             </div>
 
             <div className="messages">
               {msgs.length >= 0
                 ? msgs.map((msg, i) => (
-                    <Message key={i} msg={msg} user1={user1} />
+                    <Message
+                      key={i}
+                      msg={msg}
+                      user1={user1}
+                      user2={chat.uid}
+                      user2Name={chat.name}
+                      listen={listen}
+                    />
                   ))
                 : null}
             </div>
@@ -243,7 +285,11 @@ const Home = () => {
               text={text}
               setText={setText}
               setImg={setImg}
-              img = {img}
+              img={img}
+              setLoading={setLoading}
+              loading={loading}
+              setListen={setListen}
+              setIsWebCam={setIsWebCam}
             />
           </>
         ) : (

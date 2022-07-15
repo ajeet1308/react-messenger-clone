@@ -8,6 +8,7 @@ import Register from "./pages/Register";
 import AuthProvider from "./context/auth";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from './pages/Profile'
+import VideoChatContainer from "./pages/VideoChatContainer";
 
 function App() {
   return (
@@ -22,6 +23,8 @@ function App() {
           <Route exact path="/register" element={<Register />} />
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/profile" element={<Profile/>} />
+          <Route exact path="/call/:id/" element={<VideoChatContainer/>}/>
+          {/* <Route exact path="/call/:id" element={(props) => <VideoChatContainer {...props}/>}/> */}
         </Routes>
       </BrowserRouter>
     </AuthProvider>

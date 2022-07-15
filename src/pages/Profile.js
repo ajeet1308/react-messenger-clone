@@ -6,6 +6,9 @@ import { storage, db, auth } from "../firebase";
 import { ref, getDownloadURL, uploadBytes, deleteObject } from "firebase/storage";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import Edit1 from "../components/svg/Edit1";
+import { async } from "@firebase/util";
+import Swal from "sweetalert2";
 
 const Profile = () => {
   const [img, setImg] = useState("");
@@ -71,6 +74,24 @@ const Profile = () => {
       console.log(err.message);
     }
   }
+  const Edit1Message = async()=>{
+    const { value: text } = await Swal.fire({
+      input: 'textarea',
+      inputLabel: 'Message',
+      inputPlaceholder: 'Please Enter your Name here...',
+      inputAttributes: {
+        'aria-label': 'Please Enter your Name here'
+      },
+      showCancelButton: true
+    })
+    
+    if (text) {
+      await updateDoc(doc(db,'users',auth.currentUser.uid),{
+        name:text,
+      })
+      window.location.reload();
+    }
+  }
   return (
     <section>
       <div className="profile_container">
@@ -94,7 +115,8 @@ const Profile = () => {
           </div>
         </div>
         <div>
-          <h3>{user.name}</h3>
+          <h3 style={{float:"left"}}>{user.name}</h3>
+          <Edit1 Edit1Message={Edit1Message}/>
           <p>{user.email}</p>
           <hr />
           {/* <small>Joined on: {user.createdAt.toDate().toDateString()}</small> */}

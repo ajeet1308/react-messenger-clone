@@ -40,24 +40,26 @@ const Navbar = () => {
   };
 
   return (
-    <nav>
-      <h3>
-        <Link to="/">Messenger</Link>
-      </h3>
-      <div>
-        {user ? (
-          <>
-            <Link to="/profile">Profile</Link>
-            <button className="btn" onClick={handleSignOut}>Logout</button>
-          </>
-        ) : (
-          <>
-            <Link to="/register">Register</Link>
-            <Link to="/login">Login</Link>
-          </>
-        )}
-      </div>
-    </nav>
+    <div className="navbar">
+      <nav>
+        <h3>
+          <Link to="/">Messenger</Link>
+        </h3>
+        <div>
+          {user ? (
+            <>
+              <Link to="/profile">Profile</Link>
+              <button className="btn" onClick={handleSignOut}>Logout</button>
+            </>
+          ) : (
+            <>
+              <Link to="/register">Register</Link>
+              <Link to="/login">Login</Link>
+            </>
+          )}
+        </div>
+      </nav>
+    </div>
   );
 };
 
