@@ -3,16 +3,12 @@ import Moment from "react-moment";
 import LinkTo from "./svg/LinkTo";
 import Dots from './svg/Dots'
 import Edit from './svg/Edit'
-import { deleteDoc,doc,collection,updateDoc } from "firebase/firestore";
+import { deleteDoc,doc,updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import Swal from "sweetalert2";
 
 const Message = ({ msg, user1,user2,user2Name}) => {
   const scrollRef = useRef();
-  // console.log(user2Name)
-  console.log(user1)
-  console.log(msg)
-  console.log(user2)
   const id= user1 > user2 ? `${user1 + user2}` : `${user2 + user1}`;
   const next_id = msg[1]
   useEffect(() => {
@@ -50,7 +46,6 @@ const Message = ({ msg, user1,user2,user2Name}) => {
     })
     
     if (text) {
-      // Swal.fire(text)
       Swal.fire({
         title: 'Do you want to save the changes?',
         showDenyButton: true,

@@ -1,75 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { db, auth } from "../firebase";
-// import {
-//   collection,
-//   query,
-//   where,
-//   onSnapshot,
-//   QuerySnapshot,
-//   addDoc,
-// } from "firebase/firestore";
-// import User from "../components/User";
-// import MessageForm from "../components/MessageForm";
-
-// const Home = () => {
-//   const [users, setUsers] = useState([]);
-//   const [chat, setChat] = useState("");
-//   const [text,setText] = useState('');
-//   useEffect(() => {
-//     const usersRef = collection(db, "users");
-//     // Create query object
-//     const q = query(usersRef, where("uid", "not-in", [auth.currentUser.uid]));
-//     // execute query
-//     const unsub = onSnapshot(q, (QuerySnapshot) => {
-//       let users = [];
-//       QuerySnapshot.forEach((doc) => {
-//         users.push(doc.data());
-//       });
-//       setUsers(users);
-//     });
-//     return () => unsub();
-//   }, []);
-//   console.log(users);
-//   const selectUser = (user) => {
-//     setChat(user);
-//     console.log(user);
-//   };
-//   const handleSubmit = async (e)=>{
-//     e.preventDefault();
-//     const user2 = chat.uid;
-//     const id = user1>user2?`${user1+user2}`:`$(user2+user1)`
-//     await addDoc(collection(db,'messages',))
-//   }
-//   // onSnapShot : online listener (to check user status : online or offline)
-//   return (
-//     <>
-//       <div className="home_container">
-//         <div className="users_container">
-//           {users.map((user) => (
-//             <User key={user.uid} user={user} selectUser={selectUser} />
-//           ))}
-//         </div>
-//       </div>
-
-//       <div className="messages_container">
-//         {chat ? (
-//           <>
-//             <div className="messages_user">
-//               <h3>{chat.name}</h3>
-//             </div>
-//             <MessageForm/>
-//             <div></div>
-//           </>
-//         ) : (
-//           <h3 className="no_conv">Select a user to start conversation</h3>
-//         )}
-//       </div>
-//     </>
-//   );
-// };
-
-// export default Home;
-
 import React, { useEffect, useState } from "react";
 import { db, auth, storage } from "../firebase";
 import {
@@ -90,23 +18,20 @@ import User from "../components/User";
 import MessageForm from "../components/MessageForm";
 import Message from "../components/Message";
 import Img from "../photo.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import VideoCall from "../components/svg/VideoCall";
-import LinkTo from "../components/svg/LinkTo";
 
 const Home = () => {
   const [users, setUsers] = useState([]);
   const [chat, setChat] = useState("");
   const [text, setText] = useState("");
   const [img, setImg] = useState("");
-  const [incoming, setIncoming] = useState("");
   const [loading, setLoading] = useState(false);
   const [listen, setListen] = useState("");
   const [msgs, setMsgs] = useState([]);
   const [isWebCam, setIsWebCam] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [user1detail, setUser1detail] = useState("");
-  const [user2detail, setUser2detail] = useState("");
   const navigate = useNavigate();
   const user1 = auth.currentUser ? auth.currentUser.uid : null;
 
@@ -143,8 +68,6 @@ const Home = () => {
     const user2 = user.uid;
     const id = user1 > user2 ? `${user1 + user2}` : `${user2 + user1}`;
 
-    console.log(user1);
-    console.log(user2);
     const msgsRef = collection(db, "messages", id, "chat");
     const q = query(msgsRef, orderBy("createdAt", "asc"));
 
@@ -152,7 +75,6 @@ const Home = () => {
       let msgs = [];
       querySnapshot.forEach((doc) => {
         msgs.push([doc.data(), doc.id]);
-        console.log(doc.data(), doc.id);
       });
       setMsgs(msgs);
     });
@@ -205,7 +127,6 @@ const Home = () => {
       media: url || "",
       unread: true,
     });
-    console.log(user2.name);
     setText("");
     setImg("");
     setListen("");
@@ -215,7 +136,6 @@ const Home = () => {
   const handleVideoCall = () => {
     navigate("/call/" + chat.uid);
   };
-  console.log(chat);
   return (
     <div className="home_container">
       <div className="users_container">

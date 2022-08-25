@@ -1,24 +1,3 @@
-// import React from 'react'
-// import Img from '../photo.svg'
-
-// const User = ({user,selectUser}) => {
-//   return (
-//     <div className='user-wrapper' onClick={()=>selectUser(user)} style={{cursor:"pointer"}}>
-//         <div className='user-info' >
-//             <div className='user_detail'>
-//                 <img src={user.avatar || Img} alt='avatar' className='avatar'/>
-//                 <h4>{user.name}</h4>
-//             </div>
-//             <div className={`user_status ${user.isOnline ? "online":"offline"}`}>
-//             </div>
-//             <div className='underLine'></div>
-//         </div>
-//     </div>
-//   )
-// }
-
-// export default User
-
 import React, { useEffect, useState } from "react";
 import Img from "../photo.svg";
 import { onSnapshot, doc } from "firebase/firestore";

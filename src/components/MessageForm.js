@@ -1,13 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import Picker from "emoji-picker-react";
-import { Recorder } from "react-voice-recorder";
 import "react-voice-recorder/dist/index.css";
 import Mic from "../components/svg/Mic";
 import ChatCamera from "../components/svg/ChatCamera";
-import Photo from "../photo.svg";
 import WebCam from "./WebCam";
-import Stop from "../components/svg/Stop";
-import { ref } from "firebase/storage";
 import AudioFile from "./AudioFile";
 import Attachment from "./svg/Attachment";
 import Folder from "./svg/Folder";
@@ -37,7 +33,6 @@ const MessageForm = ({
     setText((prevInput) => prevInput + emojiObject.emoji);
     setShowPicker(false);
   };
-  console.log("MessageForm",img)
   return (
     <form className="message_form" onSubmit={handleSubmit}>
       <div className="picker-container">

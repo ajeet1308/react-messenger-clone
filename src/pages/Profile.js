@@ -7,7 +7,6 @@ import { ref, getDownloadURL, uploadBytes, deleteObject } from "firebase/storage
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Edit1 from "../components/svg/Edit1";
-import { async } from "@firebase/util";
 import Swal from "sweetalert2";
 
 const Profile = () => {
@@ -119,7 +118,6 @@ const Profile = () => {
           <Edit1 Edit1Message={Edit1Message}/>
           <p>{user.email}</p>
           <hr />
-          {/* <small>Joined on: {user.createdAt.toDate().toDateString()}</small> */}
         </div>
       </div>
     </section>

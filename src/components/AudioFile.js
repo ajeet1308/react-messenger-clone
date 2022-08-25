@@ -1,7 +1,4 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
-import { useReactMediaRecorder } from "react-media-recorder";
-import CancelAudio from "./svg/CancelAudio";
 import DeleteAudio from "./svg/DeleteAudio";
 import Pause from "./svg/Pause";
 import AudioMic from "./svg/AudioMic";
@@ -52,7 +49,6 @@ const AudioFile = ({ img, setImg, setAudio}) => {
           // });
 
           setBlobUrl(blobVal);
-          console.log(blob);
           setImg(blob);
         });
         if (stopButtonRef && stopButtonRef.current)
@@ -96,7 +92,7 @@ const AudioFile = ({ img, setImg, setAudio}) => {
         </div>
         {!IsAudio?
           <div className="smile-footer-null">
-            <span onClick={()=>{console.log("This is my img");console.log(img);setAudio(false);}}><Tick/></span>
+            <span onClick={()=>{setAudio(false);}}><Tick/></span>
           </div>
           :
           null
